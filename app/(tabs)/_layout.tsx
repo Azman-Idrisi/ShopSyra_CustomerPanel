@@ -1,35 +1,121 @@
-import { Tabs } from 'expo-router';
-import React from 'react';
+import { Redirect, Tabs } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
+import { View, Text } from "react-native";
+import { useTheme } from "@/context/ThemeContext";
+import { useShop } from "@/context/ShopContext";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useAuth } from "@/context/AuthContext";
 
-import { HapticTab } from '@/components/haptic-tab';
-import { IconSymbol } from '@/components/ui/icon-symbol';
-import { Colors } from '@/constants/theme';
-import { useColorScheme } from '@/hooks/use-color-scheme';
+export default function TabsLayout() {
+  const { theme } = useTheme();
+  const { cart, wishlist } = useShop();
+  const { isAuthenticated, isAuthLoading } = useAuth();
+  const insets = useSafeAreaInsets();
 
-export default function TabLayout() {
-  const colorScheme = useColorScheme();
+  const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+
+  const renderBadge = (count: number) => {
+    if (!count) {
+      return null;
+    }
+    return (
+      <View
+        style={{
+          position: "absolute",
+          top: -6,
+          right: -10,
+          backgroundColor: "#F04966",
+          minWidth: 16,
+          height: 16,
+          borderRadius: 8,
+          alignItems: "center",
+          justifyContent: "center",
+          paddingHorizontal: 4,
+        }}
+      >
+        <Text
+          style={{ color: "#fff", fontSize: 10, fontFamily: "Poppins-med" }}
+        >
+          {count > 9 ? "9+" : count}
+        </Text>
+      </View>
+    );
+  };
+
+  if (isAuthLoading) {
+    return null;
+  }
+
+  if (!isAuthenticated) {
+    return <Redirect href="/" />;
+  }
 
   return (
-    <Tabs
-      screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        headerShown: false,
-        tabBarButton: HapticTab,
-      }}>
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: 'Home',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
+      <Tabs
+        screenOptions={{
+          headerShown: false,
+          tabBarActiveTintColor: theme.text,
+          tabBarInactiveTintColor: theme.textMuted,
+          tabBarStyle: {
+            backgroundColor: theme.surface,
+            borderTopWidth: 0,
+            elevation: 0,
+            shadowColor: "#000",
+            shadowOffset: { width: 0, height: -8 },
+            shadowOpacity: theme.mode === "dark" ? 0.1 : 0.04,
+            shadowRadius: 20,
+            height: 64 + insets.bottom,
+            paddingTop: 8,
+            paddingBottom: insets.bottom,
+          },
+          tabBarLabelStyle: {
+            fontFamily: "Poppins-med",
+            fontSize: 11,
+          },
         }}
-      />
-      <Tabs.Screen
-        name="explore"
-        options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
-        }}
-      />
-    </Tabs>
+      >
+        <Tabs.Screen
+          name="index"
+          options={{
+            title: "Home",
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name="home-outline" size={size} color={color} />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="cart"
+          options={{
+            title: "Cart",
+            tabBarIcon: ({ color, size }) => (
+              <View>
+                <Ionicons name="bag-handle-outline" size={size} color={color} />
+                {renderBadge(cartCount)}
+              </View>
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="wishlist"
+          options={{
+            title: "Wishlist",
+            tabBarIcon: ({ color, size }) => (
+              <View>
+                <Ionicons name="heart-outline" size={size} color={color} />
+                {renderBadge(wishlist.length)}
+              </View>
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="profile"
+          options={{
+            title: "Profile",
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name="person-outline" size={size} color={color} />
+            ),
+          }}
+        />
+      </Tabs>
   );
 }
