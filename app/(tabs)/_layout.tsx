@@ -9,7 +9,7 @@ import { useAuth } from "@/context/AuthContext";
 export default function TabsLayout() {
   const { theme } = useTheme();
   const { cart, wishlist } = useShop();
-  const { isAuthenticated, isAuthLoading } = useAuth();
+  const { isAuthenticated } = useAuth();
   const insets = useSafeAreaInsets();
 
   const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
@@ -41,10 +41,6 @@ export default function TabsLayout() {
       </View>
     );
   };
-
-  if (isAuthLoading) {
-    return null;
-  }
 
   if (!isAuthenticated) {
     return <Redirect href="/" />;

@@ -2,13 +2,11 @@ import { useRouter } from "expo-router";
 import { Dimensions, Image, StyleSheet, Text, TextInput, TouchableOpacity, View, Keyboard, TouchableWithoutFeedback, Animated, Alert } from "react-native";
 import { useState, useEffect, useRef } from "react";
 import { api } from "../api/client";
-import { useAuth } from "@/context/AuthContext";
 const { height, width } = Dimensions.get("window");
 
 
 export default function Index() {
   const router = useRouter();
-  const { isAuthenticated, isAuthLoading } = useAuth();
   const [phoneNumber, setPhoneNumber] = useState("");
   const [showPhoneError, setShowPhoneError] = useState(false);
   const [isSendingOtp, setIsSendingOtp] = useState(false);
@@ -68,12 +66,6 @@ export default function Index() {
       keyboardDidHide.remove();
     };
   }, []);
-
-  useEffect(() => {
-    if (!isAuthLoading && isAuthenticated) {
-      router.replace("/(tabs)");
-    }
-  }, [isAuthLoading, isAuthenticated, router]);
 
 
   const handleSendOtp = async () => {
