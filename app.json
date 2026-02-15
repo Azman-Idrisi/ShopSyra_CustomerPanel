@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "ShopSyra",
-    "slug": "frontend",
+    "slug": "shopsyra",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -40,6 +40,13 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "329ab34f-16fe-4caa-a4d2-597afb303cf7"
+      }
+    },
+    "owner": "azman_idrisi"
   }
 }
